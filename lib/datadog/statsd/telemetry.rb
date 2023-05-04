@@ -100,7 +100,7 @@ module Datadog
       attr_reader :serialized_tags
 
       def pattern
-        @pattern ||= "datadog.dogstatsd.client.%s:%d|#{COUNTER_TYPE}|##{serialized_tags}"
+        @pattern ||= "dogstatsd.client.%s;#{serialized_tags} %d"
       end
 
       if Kernel.const_defined?('Process') && Process.respond_to?(:clock_gettime)

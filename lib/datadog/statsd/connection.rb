@@ -27,6 +27,7 @@ module Datadog
         if retries <= 1 &&
           (boom.is_a?(Errno::ENOTCONN) or
            boom.is_a?(Errno::ECONNREFUSED) or
+           boom.is_a?(Errno::EPIPE) or
            boom.is_a?(IOError) && boom.message =~ /closed stream/i)
           retries += 1
           begin

@@ -4,6 +4,7 @@ require 'socket'
 require_relative 'statsd/version'
 require_relative 'statsd/telemetry'
 require_relative 'statsd/udp_connection'
+require_relative 'statsd/tcp_connection'
 require_relative 'statsd/uds_connection'
 require_relative 'statsd/connection_cfg'
 require_relative 'statsd/message_buffer'
@@ -39,6 +40,7 @@ module Datadog
     CRITICAL = 2
     UNKNOWN  = 3
 
+    TCP_DEFAULT_BUFFER_SIZE = 1_490
     UDP_DEFAULT_BUFFER_SIZE = 1_432
     UDS_DEFAULT_BUFFER_SIZE = 8_192
     DEFAULT_BUFFER_POOL_SIZE = Float::INFINITY
@@ -94,6 +96,7 @@ module Datadog
       buffer_max_pool_size: nil,
       buffer_overflowing_stategy: :drop,
       buffer_flush_interval: nil,
+      transport_type: nil,
 
       sender_queue_size: nil,
 
@@ -108,6 +111,9 @@ module Datadog
         raise ArgumentError, 'tags must be an array of string tags or a Hash'
       end
 
+      # flush metrics before client is collected by GB
+      ObjectSpace.define_finalizer(self, proc { flush(sync: true, flush_telemetry: true) })
+
       @namespace = namespace
       @prefix = @namespace ? "#{@namespace}.".freeze : nil
       @serializer = Serialization::Serializer.new(prefix: @prefix, global_tags: tags)
@@ -118,6 +124,7 @@ module Datadog
           host: host,
           port: port,
           socket_path: socket_path,
+          transport_type: transport_type
         ),
 
         global_tags: tags,

@@ -37,11 +37,17 @@ module Datadog
         @connection = connection_cfg.make_connection(logger: logger, telemetry: telemetry)
 
         # Initialize buffer
-        buffer_max_payload_size ||= (@transport_type == :udp ?
-                                     UDP_DEFAULT_BUFFER_SIZE : UDS_DEFAULT_BUFFER_SIZE)
+        buffer_max_payload_size ||= case @transport_type.to_sym
+        when :udp
+          UDP_DEFAULT_BUFFER_SIZE
+        when :uds
+          UDS_DEFAULT_BUFFER_SIZE
+        when :tcp
+          TCP_DEFAULT_BUFFER_SIZE
+        end
 
         if buffer_max_payload_size <= 0
-          raise ArgumentError, 'buffer_max_payload_size cannot be <= 0'
+          raise ArgumentError, "buffer_max_payload_size cannot be <= 0(#{buffer_max_payload_size} is set)"
         end
 
         unless telemetry.nil? || telemetry.would_fit_in?(buffer_max_payload_size)
@@ -54,6 +60,7 @@ module Datadog
           overflowing_stategy: buffer_overflowing_stategy,
         )
 
+        # TODO: add tcp
         sender_queue_size ||= (@transport_type == :udp ?
                                UDP_DEFAULT_SENDER_QUEUE_SIZE : UDS_DEFAULT_SENDER_QUEUE_SIZE)
 

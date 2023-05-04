@@ -83,7 +83,7 @@ describe Datadog::Statsd::Forwarder do
 
     let(:params) do
       {
-        connection_cfg: Datadog::Statsd::ConnectionCfg.new(host: host, port: port),
+        connection_cfg: Datadog::Statsd::ConnectionCfg.new(host: host, port: port, transport_type: :udp),
 
         buffer_max_payload_size: buffer_max_payload_size,
         buffer_max_pool_size: buffer_max_pool_size,
@@ -454,7 +454,7 @@ describe Datadog::Statsd::Forwarder do
 
     let(:params) do
       {
-        connection_cfg: Datadog::Statsd::ConnectionCfg.new(host: host, port: port),
+        connection_cfg: Datadog::Statsd::ConnectionCfg.new(host: host, port: port, transport_type: :udp),
 
         buffer_max_payload_size: buffer_max_payload_size,
         buffer_max_pool_size: buffer_max_pool_size,

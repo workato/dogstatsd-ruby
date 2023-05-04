@@ -16,6 +16,7 @@ describe 'Allocations and garbage collection' do
       tags: tags,
       logger: logger,
       telemetry_flush_interval: -1,
+      transport_type: :udp
     )
   end
 
@@ -67,6 +68,7 @@ describe 'Allocations and garbage collection' do
           tags: tags,
           logger: logger,
           telemetry_enable: false,
+          transport_type: :udp
         )
       end
 
@@ -146,6 +148,7 @@ describe 'Allocations and garbage collection' do
           tags: tags,
           logger: logger,
           telemetry_enable: false,
+          transport_type: :udp
         )
       end
 
@@ -225,6 +228,7 @@ describe 'Allocations and garbage collection' do
           tags: tags,
           logger: logger,
           telemetry_enable: false,
+          transport_type: :udp
         )
       end
 
@@ -304,6 +308,7 @@ describe 'Allocations and garbage collection' do
           tags: tags,
           logger: logger,
           telemetry_enable: false,
+          transport_type: :udp
         )
       end
 

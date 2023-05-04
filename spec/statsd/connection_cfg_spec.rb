@@ -10,6 +10,7 @@ describe Datadog::Statsd::ConnectionCfg do
       'DD_AGENT_HOST' => dd_agent_host,
       'DD_DOGSTATSD_PORT' => dd_dogstatsd_port,
       'DD_DOGSTATSD_SOCKET' => dd_dogstatsd_socket,
+      'STATSD_TRANSPORT_TYPE' => 'udp'
     ) do
       example.run
     end

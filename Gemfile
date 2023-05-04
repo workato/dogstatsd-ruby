@@ -23,6 +23,8 @@ group :development do
   gem 'byebug'
   gem 'faker'
   gem 'pry'
+  gem 'rubocop'
+  gem 'pry'
 end
 
 group :test do

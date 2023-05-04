@@ -6,18 +6,22 @@ module Datadog
       attr_reader :socket_path
       attr_reader :transport_type
 
-      def initialize(host: nil, port: nil, socket_path: nil)
-        initialize_with_constructor_args(host: host, port: port, socket_path: socket_path) ||
+      def initialize(host: nil, port: nil, socket_path: nil, transport_type: :udp)
+        initialize_with_constructor_args(host: host, port: port, socket_path: socket_path, transport_type: transport_type) ||
           initialize_with_env_vars ||
           initialize_with_defaults
       end
 
       def make_connection(**params)
-        case @transport_type
+        case @transport_type&.to_sym
+        when :tcp
+          TCPConnection.new(@host, @port, **params)
         when :udp
           UDPConnection.new(@host, @port, **params)
         when :uds
           UDSConnection.new(@socket_path, **params)
+        else
+          raise "Could not create connection of type - #{@transport_type}"
         end
       end
 
@@ -25,9 +29,10 @@ module Datadog
 
       DEFAULT_HOST = '127.0.0.1'
       DEFAULT_PORT = 8125
+      DEFAULT_PROTOCOL = :udp
 
-      def initialize_with_constructor_args(host: nil, port: nil, socket_path: nil)
-        try_initialize_with(host: host, port: port, socket_path: socket_path,
+      def initialize_with_constructor_args(host: nil, port: nil, socket_path: nil, transport_type: nil)
+        try_initialize_with(host: host, port: port, socket_path: socket_path, transport_type: transport_type,
           not_both_error_message: 
             "Both UDP: (host/port #{host}:#{port}) and UDS (socket_path #{socket_path}) " +
             "constructor arguments were given. Use only one or the other.",
@@ -39,6 +44,7 @@ module Datadog
           host: ENV['DD_AGENT_HOST'],
           port: ENV['DD_DOGSTATSD_PORT'] && ENV['DD_DOGSTATSD_PORT'].to_i,
           socket_path: ENV['DD_DOGSTATSD_SOCKET'],
+          transport_type: ENV['STATSD_TRANSPORT_TYPE']&.to_sym,
           not_both_error_message:
             "Both UDP (DD_AGENT_HOST/DD_DOGSTATSD_PORT #{ENV['DD_AGENT_HOST']}:#{ENV['DD_DOGSTATSD_PORT']}) " +
             "and UDS (DD_DOGSTATSD_SOCKET #{ENV['DD_DOGSTATSD_SOCKET']}) environment variables are set. " +
@@ -47,19 +53,19 @@ module Datadog
       end
 
       def initialize_with_defaults()
-        try_initialize_with(host: DEFAULT_HOST, port: DEFAULT_PORT)
+        try_initialize_with(host: DEFAULT_HOST, port: DEFAULT_PORT, transport_type: DEFAULT_PROTOCOL)
       end
 
-      def try_initialize_with(host: nil, port: nil, socket_path: nil, not_both_error_message: "")
+      def try_initialize_with(host: nil, port: nil, socket_path: nil, not_both_error_message: "", transport_type: nil)
         if (host || port) && socket_path
           raise ArgumentError, not_both_error_message
         end
 
-        if host || port 
+        if host || port
           @host = host || DEFAULT_HOST
           @port = port || DEFAULT_PORT
           @socket_path = nil
-          @transport_type = :udp
+          @transport_type = transport_type
           return true
         elsif socket_path
           @host = nil

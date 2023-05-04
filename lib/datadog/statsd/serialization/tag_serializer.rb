@@ -14,7 +14,7 @@ module Datadog
           # Convert to tag list and set
           @global_tags = to_tags_list(global_tags)
           if @global_tags.any?
-            @global_tags_formatted = @global_tags.join(',')
+            @global_tags_formatted = @global_tags.join(';')
           else
             @global_tags_formatted = nil
           end
@@ -31,7 +31,7 @@ module Datadog
                    to_tags_list(message_tags)
                  end
 
-          tags.join(',')
+          tags.join(';')
         end
 
         attr_reader :global_tags
@@ -60,7 +60,7 @@ module Datadog
           when Hash
             tags.map do |name, value|
               if value
-                escape_tag_content("#{name}:#{value}")
+                escape_tag_content("#{name}=#{value}")
               else
                 escape_tag_content(name)
               end

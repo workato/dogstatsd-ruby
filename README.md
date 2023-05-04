@@ -1,10 +1,26 @@
 # dogstatsd-ruby
 
-A client for DogStatsD, an extension of the StatsD metric server for Datadog. Full API documentation is available in [DogStatsD-ruby rubydoc](https://www.rubydoc.info/github/DataDog/dogstatsd-ruby/master/Datadog/Statsd).
+Originaly it was a datadog client for sending statsd metrics  to their proprietary agent. Gem is pretty performant and it was decided to rewrite it a bit to be able to send metrics to VictoriaMetrics
 
-[![Build Status](https://secure.travis-ci.org/DataDog/dogstatsd-ruby.svg)](http://travis-ci.org/DataDog/dogstatsd-ruby)
+Original datadog [API documentation](https://www.rubydoc.info/github/DataDog/dogstatsd-ruby/master/Datadog/Statsd) is still usefull, but pay attention to existing changes
 
-See [CHANGELOG.md](CHANGELOG.md) for changes. To suggest a feature, report a bug, or general discussion, [open an issue](http://github.com/DataDog/dogstatsd-ruby/issues/).
+# Workato changes
+## TCP connection
+Added tcp connection as transport for metrics, now transport-type can be set as a param to DogStatsD client instance: 
+```ruby
+statsd = Datadog::Statsd.new('localhost', 8125, transport_type: :tcp)
+# now client uses tcp as transport
+```
+## Changed metrics format
+VictoriaMetrics has a proprietary format of metrics described [here](https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#how-to-send-data-from-graphite-compatible-agents-such-as-statsd).  
+Old format: `metric_name:1|c|@0.5`  
+New format: `metric_name;tag1=val1;tag2=val2 1`  
+### List of format changes
+- use `;` instead of `,` for separating tags
+- use `=` instead of `:` for setting values to tags
+- VictoriaMetrics does not support data sampling, so we don't send sample_rate
+- VictoriaMetrics does not support [metric types](https://docs.victoriametrics.com/keyConcepts.html#types-of-metrics), so we don't send them
+- tags are passed between metric name and value(previously tags were passed after metric value)
 
 ## Installation
 
@@ -107,10 +123,6 @@ env:
 
 The DogStatsD client attaches an internal tag, `entity_id`. The value of this tag is the content of the `DD_ENTITY_ID` environment variable, which is the pod’s UID.
 
-## Usage
-
-In order to use DogStatsD metrics, events, and Service Checks the Datadog Agent must be [running and available](https://docs.datadoghq.com/developers/dogstatsd/?tab=ruby).
-
 ### Metrics
 
 After the client is created, you can start sending custom metrics to Datadog. See the dedicated [Metric Submission: DogStatsD documentation](https://docs.datadoghq.com/metrics/dogstatsd_metrics_submission/?tab=ruby) to see how to submit all supported metric types to Datadog with working code examples:
@@ -122,14 +134,6 @@ After the client is created, you can start sending custom metrics to Datadog. Se
 * [Submit a DISTRIBUTION metric](https://docs.datadoghq.com/metrics/dogstatsd_metrics_submission/?code-lang=ruby#distribution)
 
 Some options are suppported when submitting metrics, like [applying a Sample Rate to your metrics](https://docs.datadoghq.com/metrics/dogstatsd_metrics_submission/?tab=ruby#metric-submission-options) or [tagging your metrics with your custom tags](https://docs.datadoghq.com/metrics/dogstatsd_metrics_submission/?tab=ruby#metric-tagging). Find all the available functions to report metrics in the [DogStatsD-ruby rubydoc](https://www.rubydoc.info/github/DataDog/dogstatsd-ruby/master/Datadog/Statsd).
-
-### Events
-
-After the client is created, you can start sending events to your Datadog Event Stream. See the dedicated [Event Submission: DogStatsD documentation](https://docs.datadoghq.com/events/guides/dogstatsd/?code-lang=ruby) to see how to submit an event to Datadog your Event Stream.
-
-### Service Checks
-
-After the client is created, you can start sending Service Checks to Datadog. See the dedicated [Service Check Submission: DogStatsD documentation](https://docs.datadoghq.com/developers/service_checks/dogstatsd_service_checks_submission/?tab=ruby) to see how to submit a Service Check to Datadog.
 
 ### Maximum packet size in high-throughput scenarios
 

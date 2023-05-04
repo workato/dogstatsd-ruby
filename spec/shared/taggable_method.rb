@@ -4,13 +4,13 @@ RSpec.shared_examples 'a taggable method' do |normal_expected_result, telemetry_
 
   context 'when tags are an array of strings' do
     let(:action_tags) do
-      %w[country:usa state:ny other]
+      %w[country=usa state=ny other]
     end
 
     it 'supports tags' do
       basic_action
 
-      expect(socket.recv[0]).to eq_with_telemetry "#{normal_expected_result}|#country:usa,state:ny,other", telemetry_options
+      expect(socket.recv[0]).to eq_with_telemetry "#{normal_expected_result}|#country=usa;state=ny;other", telemetry_options
     end
 
     context 'when there is global tags' do
@@ -21,7 +21,7 @@ RSpec.shared_examples 'a taggable method' do |normal_expected_result, telemetry_
       it 'merges global and provided tags' do
         basic_action
 
-        expect(socket.recv[0]).to match(/^#{normal_expected_result}|#global_tag,country:usa,state:ny,other/)
+        expect(socket.recv[0]).to match(/^#{normal_expected_result}|#global_tag;country=usa;state=ny;other/)
       end
     end
   end
@@ -37,7 +37,7 @@ RSpec.shared_examples 'a taggable method' do |normal_expected_result, telemetry_
     it 'supports tags' do
       basic_action
 
-      expect(socket.recv[0]).to eq_with_telemetry "#{normal_expected_result}|#country:usa,state:ny", telemetry_options
+      expect(socket.recv[0]).to eq_with_telemetry "#{normal_expected_result}|#country=usa;state=ny", telemetry_options
     end
 
     context 'when there is global tags' do
@@ -48,7 +48,7 @@ RSpec.shared_examples 'a taggable method' do |normal_expected_result, telemetry_
       it 'merges global and provided tags' do
         basic_action
 
-        expect(socket.recv[0]).to match(/^#{normal_expected_result}|#global_tag,country:usa,state:ny/)
+        expect(socket.recv[0]).to match(/^#{normal_expected_result}|#global_tag;country=usa;state=ny/)
       end
     end
   end

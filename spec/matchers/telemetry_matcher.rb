@@ -19,17 +19,17 @@ RSpec::Matchers.define :eq_with_telemetry do |expected_message, telemetry_option
                     transport: 'udp')
     [
       text,
-      "datadog.dogstatsd.client.metrics:#{metrics}|c|#client:ruby,client_version:#{Datadog::Statsd::VERSION},client_transport:#{transport}",
-      "datadog.dogstatsd.client.events:#{events}|c|#client:ruby,client_version:#{Datadog::Statsd::VERSION},client_transport:#{transport}",
-      "datadog.dogstatsd.client.service_checks:#{service_checks}|c|#client:ruby,client_version:#{Datadog::Statsd::VERSION},client_transport:#{transport}",
-      "datadog.dogstatsd.client.bytes_sent:#{bytes_sent}|c|#client:ruby,client_version:#{Datadog::Statsd::VERSION},client_transport:#{transport}",
-      "datadog.dogstatsd.client.bytes_dropped:#{bytes_dropped}|c|#client:ruby,client_version:#{Datadog::Statsd::VERSION},client_transport:#{transport}",
-      "datadog.dogstatsd.client.bytes_dropped_queue:#{bytes_dropped_queue}|c|#client:ruby,client_version:#{Datadog::Statsd::VERSION},client_transport:#{transport}",
-      "datadog.dogstatsd.client.bytes_dropped_writer:#{bytes_dropped_writer}|c|#client:ruby,client_version:#{Datadog::Statsd::VERSION},client_transport:#{transport}",
-      "datadog.dogstatsd.client.packets_sent:#{packets_sent}|c|#client:ruby,client_version:#{Datadog::Statsd::VERSION},client_transport:#{transport}",
-      "datadog.dogstatsd.client.packets_dropped:#{packets_dropped}|c|#client:ruby,client_version:#{Datadog::Statsd::VERSION},client_transport:#{transport}",
-      "datadog.dogstatsd.client.packets_dropped_queue:#{packets_dropped_queue}|c|#client:ruby,client_version:#{Datadog::Statsd::VERSION},client_transport:#{transport}",
-      "datadog.dogstatsd.client.packets_dropped_writer:#{packets_dropped_writer}|c|#client:ruby,client_version:#{Datadog::Statsd::VERSION},client_transport:#{transport}",
+      "dogstatsd.client.metrics;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{metrics}",
+      "dogstatsd.client.events;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{events}",
+      "dogstatsd.client.service_checks;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{service_checks}",
+      "dogstatsd.client.bytes_sent;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{bytes_sent}",
+      "dogstatsd.client.bytes_dropped;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{bytes_dropped}",
+      "dogstatsd.client.bytes_dropped_queue;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{bytes_dropped_queue}",
+      "dogstatsd.client.bytes_dropped_writer;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{bytes_dropped_writer}",
+      "dogstatsd.client.packets_sent;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{packets_sent}",
+      "dogstatsd.client.packets_dropped;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{packets_dropped}",
+      "dogstatsd.client.packets_dropped_queue;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{packets_dropped_queue}",
+      "dogstatsd.client.packets_dropped_writer;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{packets_dropped_writer}",
     ].join("\n")
   end
 

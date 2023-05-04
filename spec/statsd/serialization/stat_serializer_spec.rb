@@ -28,7 +28,7 @@ describe Datadog::Statsd::Serialization::StatSerializer do
     end
 
     it 'serializes the stat correctly' do
-      expect(subject.format('somecount', -2, 'c')).to eq 'somecount:-2|c'
+      expect(subject.format('somecount', -2, 'c')).to eq 'somecount -2'
     end
 
     context 'when there is a prefix' do
@@ -37,7 +37,7 @@ describe Datadog::Statsd::Serialization::StatSerializer do
       end
 
       it 'prefixes the stat correctly' do
-        expect(subject.format('somecount', -2, 'c')).to eq 'swag.somecount:-2|c'
+        expect(subject.format('somecount', -2, 'c')).to eq 'swag.somecount -2'
       end
     end
 
@@ -50,7 +50,7 @@ describe Datadog::Statsd::Serialization::StatSerializer do
         allow(tag_serializer)
           .to receive(:format)
           .with(message_tags)
-          .and_return('globaltag1:value1,msgtag2:value2')
+          .and_return('globaltag1=value1;msgtag2=value2')
       end
 
       it 'uses the tags serializer correctly' do
@@ -62,13 +62,13 @@ describe Datadog::Statsd::Serialization::StatSerializer do
       end
 
       it 'adds the tags to the stat correctly' do
-        expect(subject.format('somecount', 42, 'c', tags: message_tags)).to eq 'somecount:42|c|#globaltag1:value1,msgtag2:value2'
+        expect(subject.format('somecount', 42, 'c', tags: message_tags)).to eq 'somecount;globaltag1=value1;msgtag2=value2 42'
       end
     end
 
     context 'when having a sample rate' do
       it 'serializes the stat correctly' do
-        expect(subject.format('somecount', -2, 'c', sample_rate: 0.5)).to eq 'somecount:-2|c|@0.5'
+        expect(subject.format('somecount', -2, 'c', sample_rate: 0.5)).to eq 'somecount -2'
       end
     end
 
@@ -85,11 +85,11 @@ describe Datadog::Statsd::Serialization::StatSerializer do
         allow(tag_serializer)
           .to receive(:format)
           .with(message_tags)
-          .and_return('globaltag1:value1,msgtag2:value2')
+          .and_return('globaltag1=value1;msgtag2=value2')
       end
 
       it 'adds the tags to the stat correctly' do
-        expect(subject.format('somecount', 42, 'c', tags: message_tags, sample_rate: 0.5)).to eq 'swag.somecount:42|c|@0.5|#globaltag1:value1,msgtag2:value2'
+        expect(subject.format('somecount', 42, 'c', tags: message_tags, sample_rate: 0.5)).to eq 'swag.somecount;globaltag1=value1;msgtag2=value2 42'
       end
     end
   end

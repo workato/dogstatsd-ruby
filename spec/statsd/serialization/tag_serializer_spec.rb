@@ -27,11 +27,11 @@ describe Datadog::Statsd::Serialization::TagSerializer do
 
           context 'when the message tags is an array' do
             let(:message_tags) do
-              %w(request:xyz another:mal|for,med)
+              %w(request=xyz another=mal|for,med)
             end
 
             it 'returns global tags and message tags' do
-              expect(subject.format(message_tags)).to eq 'request:xyz,another:malformed'
+              expect(subject.format(message_tags)).to eq 'request=xyz;another=malformed'
             end
           end
 
@@ -44,7 +44,7 @@ describe Datadog::Statsd::Serialization::TagSerializer do
             end
 
             it 'returns global tags and message tags' do
-              expect(subject.format(message_tags)).to eq 'request:xyz,another:malformed'
+              expect(subject.format(message_tags)).to eq 'request=xyz;another=malformed'
             end
           end
         end
@@ -52,24 +52,24 @@ describe Datadog::Statsd::Serialization::TagSerializer do
 
       context 'when the global tags is an array' do
         let(:global_tags) do
-          %w[host:storage network:gigabit yolo:malformed|ta,g]
+          %w[host=storage network=gigabit yolo:malformed|ta,g]
         end
 
         [nil, [], {}].each do |empty_value_mt|
           context "when there is no message tags (#{empty_value_mt.inspect})" do
             it 'returns only global tags' do
-              expect(subject.format(empty_value_mt)).to eq 'host:storage,network:gigabit,yolo:malformedtag'
+              expect(subject.format(empty_value_mt)).to eq 'host=storage;network=gigabit;yolo=malformedtag'
             end
           end
         end
 
         context 'when the message tags is an array' do
           let(:message_tags) do
-            %w(request:xyz another:mal|for,med)
+            %w(request=xyz another=mal|for,med)
           end
 
           it 'returns global tags and message tags' do
-            expect(subject.format(message_tags)).to eq 'host:storage,network:gigabit,yolo:malformedtag,request:xyz,another:malformed'
+            expect(subject.format(message_tags)).to eq 'host=storage;network=gigabit;yolo=malformedtag;request=xyz;another=malformed'
           end
         end
 
@@ -82,7 +82,7 @@ describe Datadog::Statsd::Serialization::TagSerializer do
           end
 
           it 'returns global tags and message tags' do
-            expect(subject.format(message_tags)).to eq 'host:storage,network:gigabit,yolo:malformedtag,request:xyz,another:malformed'
+            expect(subject.format(message_tags)).to eq 'host=storage;network=gigabit;yolo=malformedtag;request=xyz;another=malformed'
           end
         end
       end
@@ -99,18 +99,18 @@ describe Datadog::Statsd::Serialization::TagSerializer do
         [nil, [], {}].each do |empty_value_mt|
           context "when there is no message tags (#{empty_value_mt.inspect})" do
             it 'returns only global tags' do
-              expect(subject.format(empty_value_mt)).to eq 'host:storage,network:gigabit,yolo:malformedtag'
+              expect(subject.format(empty_value_mt)).to eq 'host=storage;network=gigabit;yolo=malformedtag'
             end
           end
         end
 
         context 'when the message tags is an array' do
           let(:message_tags) do
-            %w(request:xyz another:mal|for,med)
+            %w(request=xyz another=mal|for,med)
           end
 
           it 'returns global tags and message tags' do
-            expect(subject.format(message_tags)).to eq 'host:storage,network:gigabit,yolo:malformedtag,request:xyz,another:malformed'
+            expect(subject.format(message_tags)).to eq 'host=storage;network=gigabit;yolo=malformedtag;request=xyz;another=malformed'
           end
         end
 
@@ -123,7 +123,7 @@ describe Datadog::Statsd::Serialization::TagSerializer do
           end
 
           it 'returns global tags and message tags' do
-            expect(subject.format(message_tags)).to eq 'host:storage,network:gigabit,yolo:malformedtag,request:xyz,another:malformed'
+            expect(subject.format(message_tags)).to eq 'host=storage;network=gigabit;yolo=malformedtag;request=xyz;another=malformed'
           end
         end
       end
@@ -131,7 +131,7 @@ describe Datadog::Statsd::Serialization::TagSerializer do
 
     context '[testing serialization edge cases]' do
       it 'formats tags with reserved characters' do
-        expect(subject.format(['name:foo,bar|foo'])).to eq 'name:foobarfoo'
+        expect(subject.format(['name=foo,bar|foo'])).to eq 'name=foobarfoo'
       end
 
       it 'formats tags values with to_s' do
@@ -140,7 +140,7 @@ describe Datadog::Statsd::Serialization::TagSerializer do
       end
 
       it 'formats frozen tags correctly' do
-        expect(subject.format(['name:foobarfoo'.freeze])).to eq 'name:foobarfoo'
+        expect(subject.format(['name=foobarfoo'.freeze])).to eq 'name=foobarfoo'
       end
     end
 
@@ -148,14 +148,14 @@ describe Datadog::Statsd::Serialization::TagSerializer do
       context 'when testing DD_TAGS' do
         around do |example|
           ClimateControl.modify(
-            'DD_TAGS' => 'ghi,team:qa'
+            'DD_TAGS' => 'ghi;team=qa'
           ) do
             example.run
           end
         end
 
         it 'correctly adds individual tags' do
-          expect(subject.format([])).to eq 'ghi,team:qa'
+          expect(subject.format([])).to eq 'ghi;team=qa'
         end
       end
 
@@ -169,7 +169,7 @@ describe Datadog::Statsd::Serialization::TagSerializer do
         end
 
         it 'correctly adds the entity_id tag' do
-          expect(subject.format([])).to eq 'dd.internal.entity_id:04652bb7-19b7-11e9-9cc6-42010a9c016d'
+          expect(subject.format([])).to eq 'dd.internal.entity_id=04652bb7-19b7-11e9-9cc6-42010a9c016d'
         end
       end
 
@@ -183,7 +183,7 @@ describe Datadog::Statsd::Serialization::TagSerializer do
         end
 
         it 'correctly adds the env tag' do
-          expect(subject.format([])).to eq 'env:staging'
+          expect(subject.format([])).to eq 'env=staging'
         end
       end
 
@@ -197,7 +197,7 @@ describe Datadog::Statsd::Serialization::TagSerializer do
         end
 
         it 'correctly adds the service tag' do
-          expect(subject.format([])).to eq 'service:billing-service'
+          expect(subject.format([])).to eq 'service=billing-service'
         end
       end
 
@@ -211,7 +211,7 @@ describe Datadog::Statsd::Serialization::TagSerializer do
         end
 
         it 'correctly adds the version tag' do
-          expect(subject.format([])).to eq 'version:0.1.0-alpha'
+          expect(subject.format([])).to eq 'version=0.1.0-alpha'
         end
       end
     end
@@ -220,8 +220,8 @@ describe Datadog::Statsd::Serialization::TagSerializer do
       before { skip("Benchmarks results are currently not used by CI") if ENV.key?('CI') }
 
       def benchmark_setup(x)
-        global_tags = %w(app:foo env:abc version:123)
-        tags_array = %w(host:storage network:gigabit request:xyz)
+        global_tags = %w(app:foo env=abc version=123)
+        tags_array = %w(host=storage network=gigabit request=xyz)
         tags_hash = { host: "storage", network: "gigabit", request: "xyz" }
         tags_empty = []
 

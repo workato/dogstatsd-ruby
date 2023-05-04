@@ -9,6 +9,7 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
       telemetry_enable: false,
       single_thread: single_thread,
       buffer_max_pool_size: buffer_max_pool_size,
+      transport_type: :udp
     )
   end
   let(:socket) { FakeUDPSocket.new(copy_message: true) }
@@ -38,9 +39,9 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
       s.decrement('yetanothercounter')
     end
     # multiple reads since buffer_max_pool_size == 2
-    expect(socket.recv[0]).to eq("mycounter:1|c\nmyothercounter:1|c")
-    expect(socket.recv[0]).to eq("anothercounter:-1|c\nmyothercounter:1|c")
-    expect(socket.recv[0]).to eq("yetanothercounter:-1|c")
+    expect(socket.recv[0]).to eq("mycounter 1\nmyothercounter 1")
+    expect(socket.recv[0]).to eq("anothercounter -1\nmyothercounter 1")
+    expect(socket.recv[0]).to eq("yetanothercounter -1")
   end
 
   it 'sends single samples in one packet' do
@@ -48,7 +49,7 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
 
     subject.flush(sync: true)
 
-    expect(socket.recv[0]).to eq 'mycounter:1|c'
+    expect(socket.recv[0]).to eq 'mycounter 1'
   end
 
   it 'sends multiple samples in one packet' do
@@ -58,7 +59,7 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
 
     subject.sync_with_outbound_io
 
-    expect(socket.recv[0]).to eq("mycounter:1|c\nmyothercounter:-1|c")
+    expect(socket.recv[0]).to eq("mycounter 1\nmyothercounter -1")
     # last value is still buffered
     expect(socket.recv).to be_nil
   end
@@ -76,11 +77,11 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
         s.increment('myothercounter')
         s.decrement('yetanothercounter')
       end
-      expect(socket.recv[0]).to eq("mycounter:1|c\nmyothercounter:1|c\nanothercounter:-1|c\nmyothercounter:1|c\nyetanothercounter:-1|c")
+      expect(socket.recv[0]).to eq("mycounter 1\nmyothercounter 1\nanothercounter -1\nmyothercounter 1\nyetanothercounter -1")
     end
 
     it 'flushes when the buffer gets too big' do
-      expected_message = 'mycounter:1|c'
+      expected_message = 'mycounter 1'
 
       # increment a counter to fill the buffer and trigger buffer flush
       buffer_size = Datadog::Statsd::UDP_DEFAULT_BUFFER_SIZE
@@ -127,7 +128,7 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
 
       subject.flush(flush_telemetry: true, sync: true)
 
-      expect(socket.recv[0]).to eq "test:1|c\ntest:-1|c\ntest:21|c\ntest:21|g\ntest:21|h\ntest:21|ms\ntest:21|s\n_sc|sc|0\n_e{2,4}:ev|text"
+      expect(socket.recv[0]).to eq "test 1\ntest -1\ntest 21\ntest 21\ntest 21\ntest 21\ntest 21\n_sc|sc|0\n_e{2,4}:ev|text"
     end
   end
 
@@ -137,6 +138,7 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
         telemetry_flush_interval: 60,
         buffer_max_pool_size: buffer_max_pool_size,
         single_thread: single_thread,
+        transport_type: :udp
       )
     end
 
@@ -150,13 +152,13 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
 
       subject.flush(flush_telemetry: true, sync: true)
 
-      expect(socket.recv[0]).to eq_with_telemetry("mygauge:10|g\nmyothergauge:20|g", bytes_sent: 0, packets_sent: 0, metrics: 2)
+      expect(socket.recv[0]).to eq_with_telemetry("mygauge 10\nmyothergauge 20", bytes_sent: 0, packets_sent: 0, metrics: 2)
 
       subject.increment('mycounter')
 
       subject.flush(flush_telemetry: true, sync: true)
 
-      expect(socket.recv[0]).to eq_with_telemetry('mycounter:1|c', bytes_sent: 1124, packets_sent: 1, metrics: 1)
+      expect(socket.recv[0]).to eq_with_telemetry('mycounter 1', bytes_sent: 999, packets_sent: 1, metrics: 1)
 
       subject.increment('myothercounter')
 
@@ -166,7 +168,7 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
 
       subject.sync_with_outbound_io
 
-      expect(socket.recv[0]).to eq_with_telemetry('myothercounter:1|c', bytes_sent: 1110, packets_sent: 1, metrics: 1)
+      expect(socket.recv[0]).to eq_with_telemetry('myothercounter 1', bytes_sent: 986, packets_sent: 1, metrics: 1)
       # last value is still buffered
       expect(socket.recv).to be_nil
     end
@@ -189,7 +191,7 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
 
         subject.flush(flush_telemetry: true, sync: true)
 
-        expect(socket.recv[0]).to eq_with_telemetry("test:1|c\ntest:-1|c\ntest:21|c\ntest:21|g\ntest:21|h\ntest:21|ms\ntest:21|s\n_sc|sc|0\n_e{2,4}:ev|text",
+        expect(socket.recv[0]).to eq_with_telemetry("test 1\ntest -1\ntest 21\ntest 21\ntest 21\ntest 21\ntest 21\n_sc|sc|0\n_e{2,4}:ev|text",
           metrics: 7,
           service_checks: 1,
           events: 1
@@ -199,7 +201,7 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
         expect(subject.telemetry.service_checks).to eq 0
         expect(subject.telemetry.events).to eq 0
         expect(subject.telemetry.packets_sent).to eq 1
-        expect(subject.telemetry.bytes_sent).to eq 1188
+        expect(subject.telemetry.bytes_sent).to eq 1052
       end
     end
   end

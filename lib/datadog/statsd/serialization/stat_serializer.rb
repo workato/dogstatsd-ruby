@@ -13,18 +13,11 @@ module Datadog
         def format(name, delta, type, tags: [], sample_rate: 1)
           name = formated_name(name)
 
-          if sample_rate != 1
-            if tags_list = tag_serializer.format(tags)
-              "#{@prefix_str}#{name}:#{delta}|#{type}|@#{sample_rate}|##{tags_list}"
-            else
-              "#{@prefix_str}#{name}:#{delta}|#{type}|@#{sample_rate}"
-            end
+          # we don't need sample rate, vitctoria metrics does not support it
+          if tags_list = tag_serializer.format(tags)
+            "#{@prefix_str}#{name};#{tags_list} #{delta}"
           else
-            if tags_list = tag_serializer.format(tags)
-              "#{@prefix_str}#{name}:#{delta}|#{type}|##{tags_list}"
-            else
-              "#{@prefix_str}#{name}:#{delta}|#{type}"
-            end
+            "#{@prefix_str}#{name} #{delta}"
           end
         end
 
