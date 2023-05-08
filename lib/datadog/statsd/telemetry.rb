@@ -81,10 +81,11 @@ module Datadog
       end
 
       def flush
+        # TODO: remove unnecessary
         [
           sprintf(pattern, 'metrics', @metrics),
-          sprintf(pattern, 'events', @events),
-          sprintf(pattern, 'service_checks', @service_checks),
+          # sprintf(pattern, 'events', @events),
+          # sprintf(pattern, 'service_checks', @service_checks),
           sprintf(pattern, 'bytes_sent', @bytes_sent),
           sprintf(pattern, 'bytes_dropped', @bytes_dropped),
           sprintf(pattern, 'bytes_dropped_queue', @bytes_dropped_queue),
@@ -100,6 +101,7 @@ module Datadog
       attr_reader :serialized_tags
 
       def pattern
+        # TODO: remove unnecessary tags
         @pattern ||= "dogstatsd.client.%s;#{serialized_tags} %d"
       end
 
