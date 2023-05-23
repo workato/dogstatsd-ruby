@@ -112,7 +112,7 @@ module Datadog
       end
 
       # flush metrics before client is collected by GB
-      ObjectSpace.define_finalizer(self, proc { flush(sync: true, flush_telemetry: true) })
+      ObjectSpace.define_finalizer(self, proc { close(flush: true) })
 
       @namespace = namespace
       @prefix = @namespace ? "#{@namespace}.".freeze : nil
