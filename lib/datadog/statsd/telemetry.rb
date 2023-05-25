@@ -102,7 +102,7 @@ module Datadog
 
       def pattern
         # TODO: remove unnecessary tags
-        @pattern ||= "dogstatsd.client.%s;#{serialized_tags} %d"
+        @pattern ||= "telemetry_%s;#{serialized_tags} %d"
       end
 
       if Kernel.const_defined?('Process') && Process.respond_to?(:clock_gettime)
