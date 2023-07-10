@@ -22,7 +22,7 @@ describe 'Allocations and garbage collection' do
 
   let(:namespace) { 'sample_ns' }
   let(:sample_rate) { nil }
-  let(:tags) { %w[abc def] }
+  let(:tags) { ['abc=def'] }
   let(:logger) do
     Logger.new(log).tap do |logger|
       logger.level = Logger::INFO

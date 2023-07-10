@@ -16,7 +16,7 @@ describe Datadog::Statsd do
 
   let(:namespace) { 'sample_ns' }
   let(:sample_rate) { nil }
-  let(:tags) { %w[abc def] }
+  let(:tags) { ['abc=def'] }
   let(:logger) do
     Logger.new(log).tap do |logger|
       logger.level = Logger::INFO
@@ -44,7 +44,7 @@ describe Datadog::Statsd do
       end
 
       it 'sets the right tags' do
-        expect(subject.tags).to eq %w[abc def]
+        expect(subject.tags).to eq ['abc=def']
       end
 
       context 'when using tags in a hash' do
@@ -66,7 +66,7 @@ describe Datadog::Statsd do
         described_class.new(
           namespace: namespace,
           sample_rate: sample_rate,
-          tags: %w[abc def]
+          tags: ['abc=def']
         )
       end
 
@@ -79,7 +79,7 @@ describe Datadog::Statsd do
           'DD_ENV' => 'staging',
           'DD_SERVICE' => 'billing-service',
           'DD_VERSION' => '0.1.0-alpha',
-          'DD_TAGS' => 'ghi,team:qa',
+          'DD_TAGS' => 'team:qa',
           'STATSD_TRANSPORT_TYPE' => 'udp'
         ) do
           example.run
@@ -96,9 +96,7 @@ describe Datadog::Statsd do
 
       it 'sets the entity tag using ' do
         expect(subject.tags).to match_array [
-          'abc',
-          'def',
-          'ghi',
+          'abc=def',
           'env=staging',
           'service=billing-service',
           'team=qa',
