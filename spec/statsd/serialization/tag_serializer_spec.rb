@@ -73,6 +73,16 @@ describe Datadog::Statsd::Serialization::TagSerializer do
           end
         end
 
+        context 'when message tags and global tags both have a key with different values' do
+          let(:message_tags) do
+            %w(request=xyz another=mal|for,med host=file)
+          end
+
+          it 'overrides value from global tags' do
+            expect(subject.format(message_tags)).to eq 'host=file;network=gigabit;yolo=malformedtag;request=xyz;another=malformed'
+          end
+        end
+
         context 'when the message tags is a hash' do
           let(:message_tags) do
             {

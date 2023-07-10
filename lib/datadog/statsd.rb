@@ -47,6 +47,7 @@ module Datadog
 
     UDP_DEFAULT_SENDER_QUEUE_SIZE = 2048
     UDS_DEFAULT_SENDER_QUEUE_SIZE = 512
+    # TODO: Add queue size for tcp
 
     MAX_EVENT_SIZE = 8 * 1_024
 

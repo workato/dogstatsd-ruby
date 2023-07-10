@@ -26,11 +26,15 @@ module Datadog
           end
 
           tags = if @global_tags_formatted
-                   [@global_tags_formatted, to_tags_list(message_tags)]
-                 else
-                   to_tags_list(message_tags)
-                 end
+            global_tags_as_hash = @global_tags_formatted.split(';').map{|v| v.split('=')}.to_h
+            message_tags_as_hash = message_tags.is_a?(Hash) ? message_tags : message_tags.map{|v| v.split('=')}.to_h
 
+            # override global_tags by message_tags
+            to_tags_list(global_tags_as_hash.merge(message_tags_as_hash))
+          else
+            to_tags_list(message_tags)
+          end
+          
           tags.join(';')
         end
 
