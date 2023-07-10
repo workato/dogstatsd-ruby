@@ -95,35 +95,35 @@ describe 'Telemetry integration testing' do
 
     subject.decrement('test', 1)
     subject.flush(sync: true)
-    expect(socket.recv[0]).to eq_with_telemetry('test -1', metrics: 1, packets_sent: 1, bytes_sent: 979)
+    expect(socket.recv[0]).to eq_with_telemetry('test -1', metrics: 1, packets_sent: 1, bytes_sent: 902)
 
     subject.count('test', 21)
     subject.flush(sync: true)
-    expect(socket.recv[0]).to eq_with_telemetry('test 21', metrics: 1, packets_sent: 1, bytes_sent: 982)
+    expect(socket.recv[0]).to eq_with_telemetry('test 21', metrics: 1, packets_sent: 1, bytes_sent: 905)
 
     subject.gauge('test', 21)
     subject.flush(sync: true)
-    expect(socket.recv[0]).to eq_with_telemetry('test 21', metrics: 1, packets_sent: 1, bytes_sent: 982)
+    expect(socket.recv[0]).to eq_with_telemetry('test 21', metrics: 1, packets_sent: 1, bytes_sent: 905)
 
     subject.histogram('test', 21)
     subject.flush(sync: true)
-    expect(socket.recv[0]).to eq_with_telemetry('test 21', metrics: 1, packets_sent: 1, bytes_sent: 982)
+    expect(socket.recv[0]).to eq_with_telemetry('test 21', metrics: 1, packets_sent: 1, bytes_sent: 905)
 
     subject.timing('test', 21)
     subject.flush(sync: true)
-    expect(socket.recv[0]).to eq_with_telemetry('test 21', metrics: 1, packets_sent: 1, bytes_sent: 982)
+    expect(socket.recv[0]).to eq_with_telemetry('test 21', metrics: 1, packets_sent: 1, bytes_sent: 905)
 
     subject.set('test', 21)
     subject.flush(sync: true)
-    expect(socket.recv[0]).to eq_with_telemetry('test 21', metrics: 1, packets_sent: 1, bytes_sent: 982)
+    expect(socket.recv[0]).to eq_with_telemetry('test 21', metrics: 1, packets_sent: 1, bytes_sent: 905)
 
     subject.service_check('sc', 0)
     subject.flush(sync: true)
-    expect(socket.recv[0]).to eq_with_telemetry('_sc|sc|0', metrics: 0, service_checks: 1, packets_sent: 1, bytes_sent: 982)
+    expect(socket.recv[0]).to eq_with_telemetry('_sc|sc|0', metrics: 0, service_checks: 1, packets_sent: 1, bytes_sent: 905)
 
     subject.event('ev', 'text')
     subject.flush(sync: true)
-    expect(socket.recv[0]).to eq_with_telemetry('_e{2,4}:ev|text', metrics: 0, events: 1, packets_sent: 1, bytes_sent: 983)
+    expect(socket.recv[0]).to eq_with_telemetry('_e{2,4}:ev|text', metrics: 0, events: 1, packets_sent: 1, bytes_sent: 906)
   end
 
   context 'when some data is dropped' do
@@ -144,8 +144,8 @@ describe 'Telemetry integration testing' do
       expect(subject.telemetry.bytes_sent).to eq 0
       expect(subject.telemetry.packets_dropped).to eq 2
       expect(subject.telemetry.packets_dropped_writer).to eq 2
-      expect(subject.telemetry.bytes_dropped).to eq 1952
-      expect(subject.telemetry.bytes_dropped_writer).to eq 1952
+      expect(subject.telemetry.bytes_dropped).to eq 1798
+      expect(subject.telemetry.bytes_dropped_writer).to eq 1798
 
       subject.gauge('test', 21)
       subject.flush(flush_telemetry: true, sync: true)
@@ -157,8 +157,8 @@ describe 'Telemetry integration testing' do
       expect(subject.telemetry.bytes_sent).to eq 0
       expect(subject.telemetry.packets_dropped).to eq 2
       expect(subject.telemetry.packets_dropped_writer).to eq 2
-      expect(subject.telemetry.bytes_dropped).to eq 1958
-      expect(subject.telemetry.bytes_dropped_writer).to eq 1958
+      expect(subject.telemetry.bytes_dropped).to eq 1804
+      expect(subject.telemetry.bytes_dropped_writer).to eq 1804
 
       #disable network failure
       socket.error_on_send(nil)
@@ -171,14 +171,14 @@ describe 'Telemetry integration testing' do
                                                   events: 0,
                                                   packets_dropped: 2,
                                                   packets_dropped_writer: 2,
-                                                  bytes_dropped: 1958,
-                                                  bytes_dropped_writer: 1958)
+                                                  bytes_dropped: 1804,
+                                                  bytes_dropped_writer: 1804)
 
       expect(subject.telemetry.metrics).to eq 0
       expect(subject.telemetry.service_checks).to eq 0
       expect(subject.telemetry.events).to eq 0
       expect(subject.telemetry.packets_sent).to eq 1
-      expect(subject.telemetry.bytes_sent).to eq 986
+      expect(subject.telemetry.bytes_sent).to eq 909
       expect(subject.telemetry.packets_dropped).to eq 0
       expect(subject.telemetry.packets_dropped_writer).to eq 0
       expect(subject.telemetry.bytes_dropped).to eq 0

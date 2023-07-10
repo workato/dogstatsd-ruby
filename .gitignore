@@ -43,3 +43,4 @@ pkg
 #
 # For vim:
 #*.swp
+tmp/examples_status.txt

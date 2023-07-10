@@ -34,4 +34,6 @@ RSpec.configure do |config|
   config.expose_dsl_globally = true
 
   config.warnings = true
+
+  config.example_status_persistence_file_path = 'tmp/examples_status.txt'
 end

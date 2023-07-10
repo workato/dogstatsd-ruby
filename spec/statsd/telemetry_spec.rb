@@ -84,17 +84,17 @@ describe Datadog::Statsd::Telemetry do
 
     it 'serializes the telemetry' do
       expect(subject.flush).to eq [
-        "dogstatsd.client.metrics;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 1",
-        "dogstatsd.client.events;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 2",
-        "dogstatsd.client.service_checks;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 3",
-        "dogstatsd.client.bytes_sent;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 4",
-        "dogstatsd.client.bytes_dropped;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 15",
-        "dogstatsd.client.bytes_dropped_queue;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 9",
-        "dogstatsd.client.bytes_dropped_writer;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 6",
-        "dogstatsd.client.packets_sent;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 5",
-        "dogstatsd.client.packets_dropped;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 15",
-        "dogstatsd.client.packets_dropped_queue;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 8",
-        "dogstatsd.client.packets_dropped_writer;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 7",
+        "telemetry_metrics;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 1",
+        "telemetry_events;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 2",
+        "telemetry_service_checks;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 3",
+        "telemetry_bytes_sent;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 4",
+        "telemetry_bytes_dropped;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 15",
+        "telemetry_bytes_dropped_queue;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 9",
+        "telemetry_bytes_dropped_writer;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 6",
+        "telemetry_packets_sent;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 5",
+        "telemetry_packets_dropped;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 15",
+        "telemetry_packets_dropped_queue;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 8",
+        "telemetry_packets_dropped_writer;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 7",
       ]
     end
 
