@@ -85,8 +85,8 @@ describe Datadog::Statsd::Telemetry do
     it 'serializes the telemetry' do
       expect(subject.flush).to eq [
         "telemetry_metrics;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 1",
-        "telemetry_events;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 2",
-        "telemetry_service_checks;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 3",
+        # "telemetry_events;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 2",
+        # "telemetry_service_checks;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 3",
         "telemetry_bytes_sent;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 4",
         "telemetry_bytes_dropped;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 15",
         "telemetry_bytes_dropped_queue;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=doe 9",

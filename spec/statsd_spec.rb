@@ -452,7 +452,7 @@ describe Datadog::Statsd do
       subject.gauge('begrutten-suffusion', -107.3)
       subject.flush(sync: true)
 
-      expect(socket.recv[0]).to eq_with_telemetry 'begrutten-suffusion -107.3', bytes_sent: 919, packets_sent: 1
+      expect(socket.recv[0]).to eq_with_telemetry 'begrutten-suffusion -107.3', bytes_sent: 765, packets_sent: 1
     end
 
     context 'with a sample rate' do
@@ -523,7 +523,7 @@ describe Datadog::Statsd do
       subject.histogram('ohmy', -107.3)
       subject.flush(sync: true)
 
-      expect(socket.recv[0]).to eq_with_telemetry 'ohmy -107.3', bytes_sent: 904, packets_sent: 1
+      expect(socket.recv[0]).to eq_with_telemetry 'ohmy -107.3', bytes_sent: 750, packets_sent: 1
     end
 
     context 'with a sample rate' do

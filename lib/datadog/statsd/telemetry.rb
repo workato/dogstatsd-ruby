@@ -81,9 +81,9 @@ module Datadog
       end
 
       def flush
-        # TODO: remove unnecessary
         [
           sprintf(pattern, 'metrics', @metrics),
+          # WARN: we don't need this telemetry metris, therefore they are commented
           # sprintf(pattern, 'events', @events),
           # sprintf(pattern, 'service_checks', @service_checks),
           sprintf(pattern, 'bytes_sent', @bytes_sent),

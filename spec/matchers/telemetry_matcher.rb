@@ -20,8 +20,8 @@ RSpec::Matchers.define :eq_with_telemetry do |expected_message, telemetry_option
     [
       text,
       "telemetry_metrics;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{metrics}",
-      "telemetry_events;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{events}",
-      "telemetry_service_checks;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{service_checks}",
+      # "telemetry_events;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{events}",
+      # "telemetry_service_checks;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{service_checks}",
       "telemetry_bytes_sent;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{bytes_sent}",
       "telemetry_bytes_dropped;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{bytes_dropped}",
       "telemetry_bytes_dropped_queue;client=ruby;client_version=#{Datadog::Statsd::VERSION};client_transport=#{transport} #{bytes_dropped_queue}",

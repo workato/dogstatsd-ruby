@@ -158,7 +158,7 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
 
       subject.flush(flush_telemetry: true, sync: true)
 
-      expect(socket.recv[0]).to eq_with_telemetry('mycounter 1', bytes_sent: 922, packets_sent: 1, metrics: 1)
+      expect(socket.recv[0]).to eq_with_telemetry('mycounter 1', bytes_sent: 768, packets_sent: 1, metrics: 1)
 
       subject.increment('myothercounter')
 
@@ -168,7 +168,7 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
 
       subject.sync_with_outbound_io
 
-      expect(socket.recv[0]).to eq_with_telemetry('myothercounter 1', bytes_sent: 909, packets_sent: 1, metrics: 1)
+      expect(socket.recv[0]).to eq_with_telemetry('myothercounter 1', bytes_sent: 755, packets_sent: 1, metrics: 1)
       # last value is still buffered
       expect(socket.recv).to be_nil
     end
@@ -201,7 +201,7 @@ RSpec.shared_examples 'Buffering integration testing' do |single_thread|
         expect(subject.telemetry.service_checks).to eq 0
         expect(subject.telemetry.events).to eq 0
         expect(subject.telemetry.packets_sent).to eq 1
-        expect(subject.telemetry.bytes_sent).to eq 975
+        expect(subject.telemetry.bytes_sent).to eq 821
       end
     end
   end
