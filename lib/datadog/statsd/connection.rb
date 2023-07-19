@@ -14,6 +14,8 @@ module Datadog
 
       # not thread safe: `Sender` instances that use this are required to properly synchronize or sequence calls to this method
       def write(payload)
+        logger.debug { "Statsd: #{payload}" } if logger
+
         send_message(payload)
 
         telemetry.sent(packets: 1, bytes: payload.length) if telemetry

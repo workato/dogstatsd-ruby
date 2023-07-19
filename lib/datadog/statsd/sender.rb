@@ -34,11 +34,11 @@ module Datadog
         # don't try to flush if there is no message_queue instantiated or
         # no companion thread running
         if !current_message_queue
-          @logger.debug { "Statsd: can't flush: no message queue ready" } if @logger
+          @logger.info { "Statsd: can't flush: no message queue ready" } if @logger
           return
         end
         if !sender_thread.alive?
-          @logger.debug { "Statsd: can't flush: no sender_thread alive" } if @logger
+          @logger.info { "Statsd: can't flush: no sender_thread alive" } if @logger
           return
         end
 
@@ -71,7 +71,7 @@ module Datadog
             # a call from another thread has already re-created
             # the companion thread before this one acquired the lock
             break if sender_thread.alive?
-            @logger.debug { "Statsd: companion thread is dead, re-creating one" } if @logger
+            @logger.info { "Statsd: companion thread is dead, re-creating one" } if @logger
 
             message_queue.close if CLOSEABLE_QUEUES
             @message_queue = nil
@@ -84,7 +84,7 @@ module Datadog
         if message_queue.length <= @queue_size
           message_queue << message
         else
-          @logger.debug { "Statsd: dropped queue: #{message}" } if @logger
+          @logger.info { "Statsd: dropped queue: #{message}" } if @logger
           @telemetry.dropped_queue(packets: 1, bytes: message.bytesize) if @telemetry
         end
       end

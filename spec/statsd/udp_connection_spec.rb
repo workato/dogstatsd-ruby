@@ -141,7 +141,7 @@ describe Datadog::Statsd::UDPConnection do
         it 'logs the error message' do
           subject.write('foobar')
 
-          expect(log.string).to match 'Statsd: SocketError unknown error'
+          expect(log.string).to match 'Statsd error: SocketError unknown error'
         end
       end
 
@@ -236,7 +236,7 @@ describe Datadog::Statsd::UDPConnection do
 
             it 'logs the error message' do
               subject.write('foobar')
-              expect(log.string).to match 'Statsd: RuntimeError yolo'
+              expect(log.string).to match 'Statsd error: RuntimeError yolo'
             end
 
             it 'connects the first socket to the right host and port' do
@@ -286,7 +286,7 @@ describe Datadog::Statsd::UDPConnection do
 
             it 'logs the error message' do
               subject.write('foobar')
-              expect(log.string).to match 'Statsd: SocketError yolo'
+              expect(log.string).to match 'Statsd error: SocketError yolo'
             end
 
             it 'updates the "dropped_writer" telemetry counts' do
@@ -422,7 +422,7 @@ describe Datadog::Statsd::UDPConnection do
 
             it 'logs the error message' do
               subject.write('foobar')
-              expect(log.string).to match 'Statsd: RuntimeError yolo'
+              expect(log.string).to match 'Statsd error: RuntimeError yolo'
             end
 
             it 'tries to send through the initial socket' do
