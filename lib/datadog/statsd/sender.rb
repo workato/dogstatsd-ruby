@@ -84,6 +84,7 @@ module Datadog
         if message_queue.length <= @queue_size
           message_queue << message
         else
+          @logger.debug { "Statsd: dropped queue: #{message}" } if @logger
           @telemetry.dropped_queue(packets: 1, bytes: message.bytesize) if @telemetry
         end
       end
