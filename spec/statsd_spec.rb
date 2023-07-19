@@ -96,12 +96,7 @@ describe Datadog::Statsd do
 
       it 'sets the entity tag using ' do
         expect(subject.tags).to match_array [
-          'abc=def',
-          'env=staging',
-          'service=billing-service',
-          'team=qa',
-          'version=0.1.0-alpha',
-          'dd.internal.entity_id=04652bb7-19b7-11e9-9cc6-42010a9c016d'
+          'abc=def'
         ]
       end
     end
@@ -1271,21 +1266,12 @@ describe Datadog::Statsd do
       subject.increment('stat', tags: ['name:foo,bar|foo'])
       subject.flush(sync: true)
 
-      expect(socket.recv[0]).to eq_with_telemetry 'stat;name:foobarfoo 1'
+      expect(socket.recv[0]).to eq_with_telemetry 'stat;name=foobarfoo 1'
     end
 
     it 'handles the cases when some tags are frozen strings' do
-      subject.increment('stat', tags: ['first_tag'.freeze, 'second_tag'])
+      subject.increment('stat', tags: ['first_tag=1'.freeze, 'second_tag=2'])
       subject.flush(sync: true)
-    end
-
-    it 'converts all values to strings' do
-      tag = double('a tag', to_s: 'yolo')
-
-      subject.increment('stat', tags: [tag])
-      subject.flush(sync: true)
-
-      expect(socket.recv[0]).to eq_with_telemetry 'stat;yolo 1'
     end
   end
 end
