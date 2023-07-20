@@ -62,7 +62,7 @@ describe 'Connection edge cases test' do
       it 'logs the error message' do
         subject.write('foobar')
 
-        expect(log.string).to match 'Statsd: SocketError unknown error'
+        expect(log.string).to match 'Statsd error: SocketError unknown error'
       end
     end
 
@@ -117,7 +117,7 @@ describe 'Connection edge cases test' do
 
           it 'logs the error message' do
             subject.write('foobar')
-            expect(log.string).to match 'Statsd: RuntimeError yolo'
+            expect(log.string).to match 'Statsd error: RuntimeError yolo'
           end
         end
 
@@ -136,7 +136,7 @@ describe 'Connection edge cases test' do
 
           it 'logs the error message' do
             subject.write('foobar')
-            expect(log.string).to match 'Statsd: SocketError yolo'
+            expect(log.string).to match 'Statsd error: SocketError yolo'
           end
         end
       end
@@ -193,7 +193,7 @@ describe 'Connection edge cases test' do
 
           it 'logs the error message' do
             subject.write('foobar')
-            expect(log.string).to match 'Statsd: RuntimeError yolo'
+            expect(log.string).to match 'Statsd error: RuntimeError yolo'
           end
         end
 
@@ -277,7 +277,7 @@ describe 'Connection edge cases test' do
         it 'does not correctly retry (2)' do
           subject.write('foobar')
 
-          expect(log.string).to match 'Statsd: Datadog::Statsd::UDSConnection::BadSocketError Errno::ECONNRESET: Connection reset by peer'
+          expect(log.string).to match 'Statsd error: Datadog::Statsd::UDSConnection::BadSocketError Errno::ECONNRESET: Connection reset by peer'
         end
       end
 
@@ -298,7 +298,7 @@ describe 'Connection edge cases test' do
           # the mecanism to retry is broken, once it's fixed, this test should pass
           it 'logs the error message', pending: true do
             subject.write('foobar')
-            expect(log.string).to match 'Statsd: RuntimeError yolo'
+            expect(log.string).to match 'Statsd error: RuntimeError yolo'
           end
         end
 
@@ -318,7 +318,7 @@ describe 'Connection edge cases test' do
           # the mecanism to retry is broken, once it's fixed, this test should pass
           it 'logs the error message', pending: true do
             subject.write('foobar')
-            expect(log.string).to match 'Statsd: SocketError yolo'
+            expect(log.string).to match 'Statsd error: SocketError yolo'
           end
         end
       end
@@ -359,7 +359,7 @@ describe 'Connection edge cases test' do
         it 'does not correctly retry (2)' do
           subject.write('foobar')
 
-          expect(log.string).to match 'Statsd: Datadog::Statsd::UDSConnection::BadSocketError Errno::ECONNREFUSED: Connection refused - closed stream'
+          expect(log.string).to match 'Statsd error: Datadog::Statsd::UDSConnection::BadSocketError Errno::ECONNREFUSED: Connection refused - closed stream'
         end
       end
 
@@ -380,7 +380,7 @@ describe 'Connection edge cases test' do
           # the mecanism to retry is broken, once it's fixed, this test should pass
           it 'logs the error message', pending: true do
             subject.write('foobar')
-            expect(log.string).to match 'Statsd: RuntimeError yolo'
+            expect(log.string).to match 'Statsd error: RuntimeError yolo'
           end
         end
 
@@ -438,7 +438,7 @@ describe 'Connection edge cases test' do
       it 'logs the error message', pending: true do
         subject.write('foobar')
 
-        expect(log.string).to match 'Statsd: Errno::ENOENT No such file or directory'
+        expect(log.string).to match 'Statsd error: Errno::ENOENT No such file or directory'
       end
     end
 
@@ -477,7 +477,7 @@ describe 'Connection edge cases test' do
       it 'logs the error message' do
         subject.write('foobar')
 
-        expect(log.string).to match 'Statsd: IO::EAGAINWaitWritable Resource temporarily unavailable'
+        expect(log.string).to match 'Statsd error: IO::EAGAINWaitWritable Resource temporarily unavailable'
       end
     end
   end

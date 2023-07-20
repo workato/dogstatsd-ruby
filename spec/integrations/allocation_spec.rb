@@ -22,7 +22,7 @@ describe 'Allocations and garbage collection' do
 
   let(:namespace) { 'sample_ns' }
   let(:sample_rate) { nil }
-  let(:tags) { %w[abc def] }
+  let(:tags) { ['abc=def', "qwe=asd"] }
   let(:logger) do
     Logger.new(log).tap do |logger|
       logger.level = Logger::INFO
@@ -47,9 +47,9 @@ describe 'Allocations and garbage collection' do
       if RUBY_VERSION < '2.4.0'
         20
       elsif RUBY_VERSION < '2.5.0'
-        19
+        25
       else
-        18
+        23
       end
     end
 
@@ -80,7 +80,7 @@ describe 'Allocations and garbage collection' do
         elsif RUBY_VERSION < '2.6.0'
           10
         else
-          9
+          13
         end
       end
 
@@ -97,11 +97,11 @@ describe 'Allocations and garbage collection' do
         if RUBY_VERSION < '2.4.0'
           29
         elsif RUBY_VERSION < '2.5.0'
-          27
+          37
         elsif RUBY_VERSION < '2.6.0'
           26
         else
-          25
+          34
         end
       end
 
@@ -129,7 +129,7 @@ describe 'Allocations and garbage collection' do
       elsif RUBY_VERSION < '2.6.0'
         18
       else
-        17
+        23
       end
     end
 
@@ -160,7 +160,7 @@ describe 'Allocations and garbage collection' do
         elsif RUBY_VERSION < '2.6.0'
           10
         else
-          9
+          13
         end
       end
 
@@ -177,11 +177,11 @@ describe 'Allocations and garbage collection' do
         if RUBY_VERSION < '2.4.0'
           29
         elsif RUBY_VERSION < '2.5.0'
-          27
+          37
         elsif RUBY_VERSION < '2.6.0'
           26
         else
-          25
+          34
         end
       end
 
@@ -209,7 +209,7 @@ describe 'Allocations and garbage collection' do
       elsif RUBY_VERSION < '2.6.0'
         20
       else
-        19
+        25
       end
     end
 
@@ -240,7 +240,7 @@ describe 'Allocations and garbage collection' do
         elsif RUBY_VERSION < '2.6.0'
           12
         else
-          11
+          15
         end
       end
 
@@ -261,7 +261,7 @@ describe 'Allocations and garbage collection' do
         elsif RUBY_VERSION < '2.6.0'
           28
         else
-          27
+          37
         end
       end
 
@@ -289,7 +289,7 @@ describe 'Allocations and garbage collection' do
       elsif RUBY_VERSION < '2.6.0'
         16
       else
-        15
+        21
       end
     end
 
@@ -320,7 +320,7 @@ describe 'Allocations and garbage collection' do
         elsif RUBY_VERSION < '2.6.0'
           8
         else
-          7
+          15
         end
       end
 
@@ -335,13 +335,13 @@ describe 'Allocations and garbage collection' do
     context 'with tags' do
       let(:expected_allocations) do
         if RUBY_VERSION < '2.4.0'
-          27
+          37
         elsif RUBY_VERSION < '2.5.0'
-          25
+          34
         elsif RUBY_VERSION < '2.6.0'
           24
         else
-          23
+          46
         end
       end
 
