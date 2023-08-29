@@ -90,7 +90,11 @@ module Datadog
             message_queue_length: message_queue.length
           }
           @logger.info { "Statsd: dropped queue: #{debug_info.compact.to_json}" } if @logger
-          @telemetry.dropped_queue(packets: 1, bytes: message.bytesize) if @telemetry
+
+          if @telemetry
+            bytesize = message.respond_to?(:bytesize) ? message.bytesize : 0
+            @telemetry.dropped_queue(packets: 1, bytes: bytesize)
+          end
         end
       end
 

@@ -49,9 +49,54 @@ describe Datadog::Statsd::UDPConnection do
     end
   end
 
+  describe '#reset_telemetry' do
+    context 'when telemetry is set' do
+      it 'resets the telemetry' do
+        expect(telemetry).to receive(:reset)
+        subject.reset_telemetry
+      end
+    end
+
+    context 'when telemetry is not set' do
+      let(:telemetry) { nil }
+
+      it 'does not raise an error' do
+        expect { subject.reset_telemetry }.to_not raise_error
+      end
+    end
+  end
+
   describe '#write' do
     let(:telemetry) do
       instance_double(Datadog::Statsd::Telemetry, sent: true, dropped_writer: true)
+    end
+
+    context 'using an IPv6 address' do
+      let(:host) { '2001:db8::dead:beef' }
+
+      it 'connects to an IPv6 host with the right address family' do
+        expect(UDPSocket)
+          .to receive(:new)
+                .with(Socket::AF_INET6)
+
+        subject.write('test')
+      end
+
+      it 'connects to the right host and port' do
+        expect(udp_socket)
+          .to receive(:connect)
+                .with('2001:db8::dead:beef', 4567)
+
+        subject.write('test')
+      end
+    end
+
+    it 'connects to an IPv4 host with the right address family' do
+      expect(UDPSocket)
+        .to receive(:new)
+        .with(Socket::AF_INET)
+
+      subject.write('test')
     end
 
     it 'connects to the right host and port' do

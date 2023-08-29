@@ -79,11 +79,12 @@ module Datadog
     # @option [Logger] logger for debugging
     # @option [Integer] buffer_max_payload_size max bytes to buffer
     # @option [Integer] buffer_max_pool_size max messages to buffer
-    # @option [Integer] sender_queue_size size of the sender queue in number of buffers (multi-thread only)
+    # @option [Integer] sender_queue_size size of the sender queue in number of buffers
     # @option [Numeric] buffer_flush_interval interval in second to flush buffer
     # @option [String] socket_path unix socket path
     # @option [Float] default sample rate if not overridden
     # @option [Boolean] single_thread flushes the metrics on the main thread instead of in a companion thread
+    # @option [Boolean] delay_serialization delays stat serialization
     def initialize(
       host = nil,
       port = nil,
@@ -104,6 +105,7 @@ module Datadog
       logger: nil,
 
       single_thread: false,
+      delay_serialization: false,
 
       telemetry_enable: true,
       telemetry_flush_interval: DEFAULT_TELEMETRY_FLUSH_INTERVAL
@@ -119,6 +121,7 @@ module Datadog
       @prefix = @namespace ? "#{@namespace}.".freeze : nil
       @serializer = Serialization::Serializer.new(prefix: @prefix, global_tags: tags)
       @sample_rate = sample_rate
+      @delay_serialization = delay_serialization
 
       @forwarder = Forwarder.new(
         connection_cfg: ConnectionCfg.new(
@@ -141,6 +144,7 @@ module Datadog
         sender_queue_size: sender_queue_size,
 
         telemetry_flush_interval: telemetry_enable ? telemetry_flush_interval : nil,
+        serializer: serializer
       )
     end
 
@@ -433,7 +437,12 @@ module Datadog
       sample_rate = opts[:sample_rate] || @sample_rate || 1
 
       if sample_rate == 1 || opts[:pre_sampled] || rand <= sample_rate
-        full_stat = serializer.to_stat(stat, delta, type, tags: opts[:tags], sample_rate: sample_rate)
+        full_stat =
+          if @delay_serialization
+            [[stat, delta, type], {tags: opts[:tags], sample_rate: sample_rate}]
+          else
+            serializer.to_stat(stat, delta, type, tags: opts[:tags], sample_rate: sample_rate)
+          end
 
         forwarder.send_message(full_stat)
       end

@@ -10,7 +10,7 @@ describe Datadog::Statsd::Serialization::StatSerializer do
   end
 
   let(:global_tags) do
-    double('global tags')
+    double('global tags', { merge: {} })
   end
 
   describe '#format' do

@@ -2,6 +2,31 @@
 
 [//]: # (comment: Don't forget to update lib/datadog/statsd/version.rb:DogStatsd::Statsd::VERSION when releasing a new version)
 
+## 5.6.0 / 2023.07.10
+
+  * [FEATURE] Add the `delay_serialization` option, allowing users to delay
+    expensive serialization until a more convenient time, such as after an HTTP
+    request has completed. In multi-threaded mode, it causes serialization to
+    happen inside the sender thread. [#271][] by [@pudiva][] and
+    [@BlakeWilliams][]
+
+  * [FEATURE] Also, support the `sender_queue_size` in `single_thread` mode, so
+    that it can benefit from the new `delay_serialization` option. Messages are
+    now queued (possibly unserialized) until `sender_queue_size` is reached or
+    `#flush` is called. It may be set to `Float::INFINITY`, so that messages
+    are indefinitely queued until an explicit `#flush`. [#271][] by [@pudiva][]
+    and [@BlakeWilliams][]
+
+  * [IMPROVEMENT] Add support of `DD_DOGSTATSD_URL` for configuration through
+    environment variable. Valid formats are: `udp://some-host`,
+    `udp://some-host:port` and `unix:///path/to/unix.sock`.
+    `DD_DOGSTATSD_URL` has priority on other environment vars (`DD_AGENT_HOST`,
+    `DD_DOGSTATSD_PORT` and `DD_DOGSTATSD_SOCKET`) but does not throw an error
+    if others are set, values are overridden instead. [#278][] by [@remeh][]
+
+  * [BUGFIX] Fix NoMethodError when Datadog::Statsd is initialized without
+    telemetry. [#272][] by [@matthewshafer][]
+
 ## 5.5.0 / 2022.06.01
 
   * [FEATURE] Add `distribution_time` method to facilitate measuring timing of a yielded block. [#248][] by [@jordan-brough][]
@@ -144,6 +169,8 @@ statsd.flush(sync: true)
 
 statsd.close()
 ```
+
+5. `statsd.connection` should not be used anymore to get the `host`, the `port` and the `socket_path` of the statsd connection, they are now available directly in the `statsd` object.
 
 ### Commits
 
@@ -429,6 +456,9 @@ Future versions are likely to introduce backward incompatibilities with < Ruby 1
 [#257]: https://github.com/DataDog/dogstatsd-ruby/issues/257
 [#258]: https://github.com/DataDog/dogstatsd-ruby/issues/258
 [#260]: https://github.com/DataDog/dogstatsd-ruby/issues/260
+[#271]: https://github.com/DataDog/dogstatsd-ruby/issues/271
+[#272]: https://github.com/DataDog/dogstatsd-ruby/issues/272
+[#278]: https://github.com/DataDog/dogstatsd-ruby/issues/278
 [@AMekss]: https://github.com/AMekss
 [@abicky]: https://github.com/abicky
 [@adimitrov]: https://github.com/adimitrov
@@ -467,3 +497,5 @@ Future versions are likely to introduce backward incompatibilities with < Ruby 1
 [@delner]: https://github.com/delner
 [@tenderlove]: https://github.com/tenderlove
 [@zachmccormick]: https://github.com/zachmccormick
+[@pudiva]: https://github.com/pudiva
+[@BlakeWilliams]: https://github.com/BlakeWilliams
