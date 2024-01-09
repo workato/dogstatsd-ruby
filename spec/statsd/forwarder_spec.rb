@@ -107,7 +107,7 @@ describe Datadog::Statsd::Forwarder do
       it 'builds an UDP connection' do
         expect(Datadog::Statsd::UDPConnection)
           .to receive(:new)
-          .with('127.0.0.1', 1234, logger: logger, telemetry: telemetry)
+          .with('127.0.0.1', 1234, logger: logger, telemetry: telemetry, timeout: nil)
 
         subject
       end
@@ -148,7 +148,7 @@ describe Datadog::Statsd::Forwarder do
         it 'builds an UDP connection without telemetry' do
           expect(Datadog::Statsd::UDPConnection)
             .to receive(:new)
-            .with('127.0.0.1', 1234, logger: logger, telemetry: nil)
+            .with('127.0.0.1', 1234, logger: logger, telemetry: nil, timeout: nil)
 
           subject
         end
@@ -292,7 +292,7 @@ describe Datadog::Statsd::Forwarder do
       it 'builds an UDS connection' do
         expect(Datadog::Statsd::UDSConnection)
           .to receive(:new)
-          .with('/tmp/dd_socket', logger: logger, telemetry: telemetry)
+          .with('/tmp/dd_socket', logger: logger, telemetry: telemetry, timeout: nil)
 
         subject
       end
@@ -333,7 +333,7 @@ describe Datadog::Statsd::Forwarder do
         it 'builds an UDP connection without telemetry' do
           expect(Datadog::Statsd::UDSConnection)
             .to receive(:new)
-            .with('/tmp/dd_socket', logger: logger, telemetry: nil)
+            .with('/tmp/dd_socket', logger: logger, telemetry: nil, timeout: nil)
 
           subject
         end

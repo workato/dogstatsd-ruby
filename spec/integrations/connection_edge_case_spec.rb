@@ -481,4 +481,67 @@ describe 'Connection edge cases test' do
       end
     end
   end
+
+  context 'when using TCP' do
+    let(:timeout) { 0.1 }
+    let(:sleep_seconds) { 1 }
+    let(:host) { 'localhost' }
+    let(:port) { 2003 }
+
+    subject do
+      Datadog::Statsd::TCPConnection.new(host, port, logger: logger, timeout: timeout)
+    end
+
+    context 'when connect takes too much time' do
+      it 'raises a timeout error on connection' do
+        allow(Socket).to receive(:tcp).with(host, port, connect_timeout: timeout).and_raise(Errno::ETIMEDOUT)
+
+        expect(subject.write('foobar')).to be_nil
+        expect(log.string).to match 'Statsd error: Errno::ETIMEDOUT'
+      end
+    end
+
+    # should be manually run to check real performance
+    # context 'without stubs' do
+    #   before do
+    #     skip("Benchmarks results are currently not used by CI") if ENV.key?('CI')
+    #   end
+
+    #   let(:connection) { Datadog::Statsd::TCPConnection.new('localhost', 2003, logger: logger) }
+
+    #   it "works" do
+    #     result = connection.write('foobar')
+
+    #     expect(result).to eq(true)
+    #   end
+
+    #   context 'when checking sending performance' do
+    #     before do
+    #       skip("Benchmarks results are currently not used by CI") if ENV.key?('CI')
+    #     end
+
+    #     let(:connection) { Datadog::Statsd::TCPConnection.new('localhost', 2003, logger: logger, timeout: 0.1) }
+
+    #     it 'has high ips value' do
+    #       require 'benchmark/ips'
+
+    #       Benchmark.ips do |x|
+    #         x.report("ips") { connection.write('foobar') }
+
+    #         x.compare!
+    #       end
+    #     end
+
+    #     it 'does not take much memory ' do
+    #       require 'benchmark-memory'
+
+    #       Benchmark.memory do |x|
+    #         x.report("memory") { connection.write('foobar') }
+
+    #         x.compare!
+    #       end
+    #     end
+    #   end
+    # end
+  end
 end

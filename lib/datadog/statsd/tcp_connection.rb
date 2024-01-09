@@ -5,6 +5,9 @@ require_relative 'connection'
 module Datadog
   class Statsd
     class TCPConnection < Connection
+      # timeout in seconds for connection and packet retransmissions
+      DEFAULT_TIMEOUT = 5
+
       # StatsD host.
       attr_reader :host
 
@@ -17,6 +20,7 @@ module Datadog
         @host = host
         @port = port
         @socket = nil
+        @timeout = kwargs[:timeout] || DEFAULT_TIMEOUT
       end
 
       def close
@@ -30,7 +34,13 @@ module Datadog
         @socket.flush rescue nil
         close if @socket
 
-        @socket = TCPSocket.new(host, port)
+        @socket = Socket.tcp(host, port, connect_timeout: @timeout)
+
+        # TCP_USER_TIMEOUT is not available on macos
+        if Socket.const_defined?('TCP_USER_TIMEOUT')
+          # set TCP_USER_TIMEOUT socket option to avoid long packet retransmissions, we prefer to fail fast
+          @socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_USER_TIMEOUT, @timeout * 1000)
+        end
       end
 
       # send_message is writing the message in the socket, it may create the socket if nil

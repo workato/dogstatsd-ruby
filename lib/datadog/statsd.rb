@@ -85,6 +85,7 @@ module Datadog
     # @option [Float] default sample rate if not overridden
     # @option [Boolean] single_thread flushes the metrics on the main thread instead of in a companion thread
     # @option [Boolean] delay_serialization delays stat serialization
+    # @option [Integer] timeout defines timeout for network operations
     def initialize(
       host = nil,
       port = nil,
@@ -108,7 +109,8 @@ module Datadog
       delay_serialization: false,
 
       telemetry_enable: true,
-      telemetry_flush_interval: DEFAULT_TELEMETRY_FLUSH_INTERVAL
+      telemetry_flush_interval: DEFAULT_TELEMETRY_FLUSH_INTERVAL,
+      timeout: nil
     )
       unless tags.nil? || tags.is_a?(Array) || tags.is_a?(Hash)
         raise ArgumentError, 'tags must be an array of string tags or a Hash'
@@ -144,7 +146,8 @@ module Datadog
         sender_queue_size: sender_queue_size,
 
         telemetry_flush_interval: telemetry_enable ? telemetry_flush_interval : nil,
-        serializer: serializer
+        serializer: serializer,
+        timeout: timeout
       )
     end
 

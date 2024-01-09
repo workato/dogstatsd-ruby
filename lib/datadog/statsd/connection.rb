@@ -3,7 +3,7 @@
 module Datadog
   class Statsd
     class Connection
-      def initialize(telemetry: nil, logger: nil)
+      def initialize(telemetry: nil, logger: nil, **_kwargs)
         @telemetry = telemetry
         @logger = logger
       end
@@ -28,6 +28,7 @@ module Datadog
           (boom.is_a?(Errno::ENOTCONN) or
            boom.is_a?(Errno::ECONNREFUSED) or
            boom.is_a?(Errno::EPIPE) or
+           boom.is_a?(Errno::ETIMEDOUT) or
            boom.is_a?(IOError) && boom.message =~ /closed stream/i)
           retries += 1
           begin
