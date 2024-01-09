@@ -23,7 +23,9 @@ module Datadog
 
         logger: nil,
 
-        serializer:
+        serializer:,
+
+        timeout: nil
       )
         @transport_type = connection_cfg.transport_type
 
@@ -36,7 +38,7 @@ module Datadog
           nil
         end
 
-        @connection = connection_cfg.make_connection(logger: logger, telemetry: telemetry)
+        @connection = connection_cfg.make_connection(logger: logger, telemetry: telemetry, timeout: timeout)
 
         # Initialize buffer
         buffer_max_payload_size ||= case @transport_type.to_sym
