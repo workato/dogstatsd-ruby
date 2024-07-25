@@ -116,9 +116,6 @@ module Datadog
         raise ArgumentError, 'tags must be an array of string tags or a Hash'
       end
 
-      # flush metrics before client is collected by GB
-      ObjectSpace.define_finalizer(self, proc { close(flush: true) })
-
       @namespace = namespace
       @prefix = @namespace ? "#{@namespace}.".freeze : nil
       @serializer = Serialization::Serializer.new(prefix: @prefix, global_tags: tags)
